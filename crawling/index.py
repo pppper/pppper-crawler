@@ -20,6 +20,11 @@ async def crawl_musinsa_product_category(bs):
   category = bs.select_one(".item_categories")
   category=category.text.split(">")[-1].split("\n")[0].replace(" ","")
   return {"category": category}
+async def crawl_musinsa_product_brand(bs):
+  brand=bs.select_one(".product_article_contents").text
+  brand= brand.split(" ")[0]
+  return({"brand":brand})
+
 
 async def crawl_musinsa_product_async(product_id):
   async with aiohttp.ClientSession() as session:
@@ -30,8 +35,8 @@ async def crawl_musinsa_product_async(product_id):
       crawled_data.append(await crawl_musinsa_product_title(bs))
       crawled_data.append(await crawl_musinsa_product_price(bs))
       crawled_data.append(await crawl_musinsa_product_category(bs))
+      crawled_data.append(await crawl_musinsa_product_brand(bs))
   return crawled_data
-
 # def crawl_musinsa_product_name(product_id):
 #   response = requests.get(f'https://store.musinsa.com/app/goods/{product_id}', headers=headers)
 #   html = response.text
@@ -50,5 +55,5 @@ async def crawl_musinsa_product_async(product_id):
 
 #   return name_el, price
 
-name_el = asyncio.run(crawl_musinsa_product_async('419333'))
+name_el = asyncio.run(crawl_musinsa_product_async('404949'))
 print(name_el)
