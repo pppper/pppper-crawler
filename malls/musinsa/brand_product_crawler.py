@@ -13,12 +13,13 @@ headers = {
 
 def crawl_musinsa_brand_products(brand_code, max_pages=10):
     '''브랜드 페이지에서 product_id 배열 반환, total: 10pages'''
+    # print(f"start crawling {brand_code}")
     def crawl_page(page):
         '''페이지 기준 product_id 배열 반환'''
         params = (
             ('sortCode', '1m'),
             ('page', page),
-            ('size', 90),
+            ('size', 2),
             ('listViewType', 'small'),
         )
 

@@ -19,7 +19,7 @@ async def extract_musinsa_brand_rank(bs):
     #"위"를 기준으로 뒤의 배열은 다 날림, (순위 변동도 날림)
     brand_rank = int(brand_rank[:temp_index])
     brand_name = brand.select_one("p.brand_name").text.replace('\n',"")
-    brand_code = brand.select_one("p.brand_name_en").text.replace('\n','')
+    brand_code = brand.select_one("p.brand_name > a")['href'].split("/")[-2]
     brand_ranking.append({'rank':brand_rank,'name':brand_name,'brandcode':brand_code})  
   return brand_ranking
 
