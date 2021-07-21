@@ -12,8 +12,9 @@ headers = {
 }
 
 def crawl_musinsa_brand_products(brand_code, max_pages=10):
-    '''total: 10pages'''
+    '''브랜드 페이지에서 product_id 배열 반환, total: 10pages'''
     def crawl_page(page):
+        '''페이지 기준 product_id 배열 반환'''
         params = (
             ('sortCode', '1m'),
             ('page', page),
@@ -29,22 +30,28 @@ def crawl_musinsa_brand_products(brand_code, max_pages=10):
         product_ids = []
 
         for element in elements:
+            #각 상품에서 id 추출, 저장
             product_id = int(element.select_one("a[name='goods_link']")['href'].split('/')[-1])
             product_ids.append(product_id)
-
         return product_ids
 
-    product_id_dict = {}
+    product_id_dict = {}#페이지 별로 product id 저장하기 위한 딕셔너리
+    
+    #멀티쓰레딩, 쓰레드풀, 비동기로 할일 할당
     with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
+        #crawl_page함수를 비동기로 호출, 쓰레드 최대 10개, {future 객체:page}를 future_to_page에 저장
         future_to_page = {executor.submit(crawl_page, page): page for page in range(1, max_pages + 1)}
+        #future_to_page에서 완료된 값을 product_id_dict에 저장
         for future in concurrent.futures.as_completed(future_to_page):
             page = future_to_page[future]
             product_id_dict[page] = future.result()
             
     product_ids = []
     
+    #페이지 순서대로 배열에 다시 저장
     for page in range(1, max_pages + 1):
         product_ids += product_id_dict[page]
+    #product id 배열 반환
     return product_ids
     
 
