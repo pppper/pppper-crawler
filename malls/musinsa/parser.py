@@ -1,8 +1,13 @@
 import time
 from bs4 import BeautifulSoup
 import regex
+import requests
 from selectolax.parser import HTMLParser
-
+import json
+from utils import timeit
+headers = {
+    'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.164 Safari/537.36',
+}
 def extract_musinsa_product_title(bs):
     '''product 명을 반환'''
     name_el = bs.css_first(
@@ -34,7 +39,7 @@ def extract_musinsa_product_competitor_price(bs):
     competitor_price = int(competitor_price.replace(
         " ", "").replace("원", "").replace(",", ""))
     return competitor_price
-def extract_musinsa_product_size_array(bs):
+def extract_musinsa_product_size_array(bs,pid):
     '''사이즈 배열 반환, 옵션이 여러개일 경우 Assertion Error 던짐'''
     sizes = []
     s = bs.css(".option_cont > select")
@@ -55,37 +60,49 @@ def extract_musinsa_product_size_array(bs):
             
     else:#사이즈 테이블이 없을 때
     
-        if(len(s)==2):
+        if(len(s)==2):#옵션 개수가 2개일 때
             count = 0
             test = s[0].css("select > option")
+            color=""
             for t in test:
-                if("옵션선택" not in t.text().replace(" ","")): count+=1
+                if("옵션선택" not in t.text().replace(" ","")): 
+                    count+=1
+                    color=t.text().replace(" ","").replace("\n","")
             assert count==1
-            ns = s[1].css("select > option")
-            for size in ns:
-                size = size.text().replace(" ","").replace("\n","")
-                if(size != "옵션선택" and "품절" not in size):
-                    # if(size.find("(")!=-1):
-                    #     size = size[:size.find("(")]
-                    # 옵션선택이거나 품절이 포함되지 않은 경우만 배열에 추가
-                    sizes.append(size)
-        else:
+            params={
+                'goods_no': pid,
+                'goods_sub': '0',
+                'goods_opt': color
+            }
+            response =requests.post('https://store.musinsa.com/app/svc/production_option', headers=headers, data=params).text
+            response = json.loads(response)
+            for r in response:
+                r=r["val"].replace(" ","")
+                if("품절" not in r):
+                    if(r.find("(")!=-1):
+                        r=r[:r.find("(")]
+                    sizes.append(r)
+            
+        else:#옵션 개수가 1개일 때
             ns = bs.css(".option_cont > select > option")    
             for size in ns:
                 size = size.text().replace(" ","").replace("\n","")
                 if(size != "옵션선택" and "품절" not in size):
-                    # if(size.find("(")!=-1):
-                    #     size = size[:size.find("(")]
+                    if(size.find("(")!=-1):
+                        size = size[:size.find("(")]
                     # 옵션선택이거나 품절이 포함되지 않은 경우만 배열에 추가
                     sizes.append(size)
     return sizes
-def extract_musinsa_product_detail_images(bs):
+def extract_musinsa_product_detail_images(bs,pid):
     '''무신사 기준 상세 이미지 주소 배열 반환'''
-    details=bs.css_first("#detail_view").css("img")
+    details=bs.css_first("#detail_view")
     urls=[]
+    assert details!=None
+    details = details.css("img")
     for detail in details:
-        if(".jpg" in detail.attrs["src"]):
-            urls.append(detail.attrs["src"])
+        if(detail.attrs["src"]):
+            if(".jpg" in detail.attrs["src"]):
+                urls.append(detail.attrs["src"])
     return urls
 def extract_musinsa_product_banner_images(bs):
     '''무신사 기준 banner 이미지, 주소 배열 반환'''
@@ -117,7 +134,7 @@ def parse_product_html(pid, html):
     product = {}
     tree = HTMLParser(html)
     try:
-        product['size_array'] = extract_musinsa_product_size_array(tree)
+        product['size_array'] = extract_musinsa_product_size_array(tree,pid)
         product['id'] = pid
         product['price'] = extract_musinsa_product_price(tree)
         product['title'] = extract_musinsa_product_title(tree)
@@ -128,7 +145,7 @@ def parse_product_html(pid, html):
         product['brand'] = extract_musinsa_product_brand(tree)
         product['competitor_price'] = extract_musinsa_product_competitor_price(tree)
         product['shipping'] = 0
-        product['detail_images'] = extract_musinsa_product_detail_images(tree)
+        product['detail_images'] = extract_musinsa_product_detail_images(tree,pid)
         product['banner_images'] = extract_musinsa_product_banner_images(tree)
         product['item_link']=f'https://store.musinsa.com/app/goods/{pid}'
         product['influencer_show'] = True
