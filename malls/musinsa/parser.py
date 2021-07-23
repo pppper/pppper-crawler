@@ -13,9 +13,10 @@ def extract_musinsa_product_title(bs):
     return name_el
 def extract_musinsa_product_price(bs):
     '''무신사 기준 회원가 중 비회원가 반환, pppper판매가, integer'''
-    price = bs.css_first(".txt_price_member").text()
-    price = int(price.replace('\n', '').replace('원', '').replace(',', ''))
-    return price
+    price = bs.css_first(".txt_price_member")
+    assert price!=None
+    price = int(price.text().replace('\n', '').replace('원', '').replace(',', ''))
+    return 
 def extract_musinsa_product_category(bs):
     '''무신사 기준 최하위 카테고리 반환'''
     category = bs.css_first(".item_categories").text()
