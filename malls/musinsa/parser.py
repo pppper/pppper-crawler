@@ -1,6 +1,4 @@
 import time
-from bs4 import BeautifulSoup
-import regex
 import requests
 from selectolax.parser import HTMLParser
 import json
@@ -129,6 +127,32 @@ def extract_musinsa_product_tag_list(bs):
     tags.append(brand)
     tags.append(category)
     return tags
+def extract_musinsa_product_recommends(bs,pid):
+    recommends=[]
+    # data = {
+    #     'goods_no': pid,
+    #     'goods_sub': '0', 
+    # }
+    # response = requests.post(f"https://store.musinsa.com/app/svc/get_size_recommend/{pid}/0",headers=headers,data=data).text
+    # response = json.loads(response)
+    # start= time.time()
+    # for r in response:
+    #     recommend ={}
+    #     recommend["gender"] = "여자" if r["sex"]=="F" else "남자"
+    #     recommend["height"] = r["height"]
+    #     recommend["weight"] = r["weight"]
+    #     recommend["goods_opt"] = r["goods_opt"]
+    #     recommend["size_recommend"] = r["size"]
+    #     recommends.append(recommend)
+    # print((time.time()-start)*1000)
+    recommend_list = bs.css("#product_size_recommend > ul > li")
+    if recommend_list:
+        for recommend in recommend_list:
+            r = (recommend.css_first(".size_content").text().replace(" ","").replace("\n","").replace("[회원추천]","").replace("Size","").replace("구매",""))
+            recommends.append(r)
+        return recommends
+    else:
+        return recommends
 
 def parse_product_html(pid, html):
     product = {}
@@ -152,6 +176,7 @@ def parse_product_html(pid, html):
         product['style_image'] = extract_musinsa_product_image(tree)
         product['tag_list'] = extract_musinsa_product_tag_list(tree)
         product['item_type'] = "default"
+        product['recommends'] = extract_musinsa_product_recommends(tree,pid)
     except AssertionError as e:
         # 사이즈 배열에서 던진 에러 처리, 옵션이 여러개면 파싱을 멈추고 None 반환
         return None

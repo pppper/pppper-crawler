@@ -9,7 +9,7 @@ from product_crawler import crawl_musinsa_product_html2
 from brand_product_crawler import crawl_musinsa_brand_products
 
 from pymongo import MongoClient
-mongodb_URI = "mongodb://sotalabs:sotalabs1%21@ec2-3-37-150-106.ap-northeast-2.compute.amazonaws.com:27017/?authSource=admin&readPreference=primary&appname=MongoDB%20Compass&ssl=false"
+mongodb_URI = "mongodb://sotalabs:sotalabs1!@localhost:27017"
 client = MongoClient(mongodb_URI)
 
 product_collection = client['crawler']['products']
@@ -55,13 +55,12 @@ def parse_product_htmls(brand, htmls):
     # 하루에 상위 50개 브랜드, 브랜드당 200개 -> 10000개 제품
 
 
-# brands = asyncio.run(crawl_musinsa_top_brand())
+# brands = asyncio.run(crawl_musinsa_top_brand())[:10]
 # brands = [brand['brandcode'] for brand in brands]
-brands = ['yale', 'nike','covernat']
-# brands = ['lee']
-
+brands = ['archivepke','alphaindustries','badblood','bensimon','branded','blond9','bemusemansion','covernat','converse','drmartens','espionage','etmon','ebbetsfield','ept','fcmm','fatalism','halbkreis','insilencewomen','kirsh','lafudgeforwomen','lafudgestore','leire','lee','lmc','mardimercredi','marithefrancoisgirbaud','markgonzales','mahagrid','maisonmined','modnine','mixxo','millioncor','nationalgeographic','neikidnis','outdoorproducts','outstanding','oioi','partimento','rothco','sovermentwithlomort','suare','spao','signature','thisisneverthat','takeasy','toffee','travel','uniformbridge','vivastudio','viaplain','wvproject','xero','yale','yourlifehere']
+print(len(brands))
 for brand in brands:
-    htmls = fetch_product_htmls(brand, 90)
+    htmls = fetch_product_htmls(brand, 91)
     # print(htmls)
     products = parse_product_htmls(brand, htmls)
 
