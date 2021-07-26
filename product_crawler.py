@@ -14,23 +14,7 @@ headers = {
 # }
 
 
-async def crawl_musinsa_product_html(product_id):
-    '''product_id를 인자로 받아서 제품 크롤링 및 파싱, JSON 형식으로 반환'''
-    # product = {}
-    # 비동기 요청
-    # async with aiohttp.ClientSession() as session:
-    #   url = f'https://store.musinsa.com/app/goods/{product_id}'
-    #   async with session.get(url, headers=headers) as response:
-    #     product_html = await response.text()#응답 텍스트 html에 저장
-    url = f'https://store.musinsa.com/app/goods/{product_id}'
-    response = requests.get(url, headers=headers)
-    product_html = response.text
-
-    # print(f"end crawling {product_id}")
-    # 파싱 데이터를 JSON 형식으로 저장 및 반환
-    return product_html
-
-def crawl_musinsa_product_html2(product_id):
+def crawl_musinsa_product_html(product_id):
     '''product_id를 인자로 받아서 제품 크롤링 및 파싱, JSON 형식으로 반환'''
     # product = {}
     # 비동기 요청

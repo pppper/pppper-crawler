@@ -11,7 +11,7 @@ headers = {
     'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.164 Safari/537.36',
 }
 
-def crawl_musinsa_brand_products(brand_code, max_pages=10):
+def crawl_musinsa_brand_product_ids(brand_code, max_pages=10):
     '''브랜드 페이지에서 product_id 배열 반환
     페이지당 최대 90개 크롤링 가능'''
     # print(f"start crawling {brand_code}")
