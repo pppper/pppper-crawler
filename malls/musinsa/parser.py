@@ -48,7 +48,10 @@ def extract_musinsa_product_size_array(bs,pid):
     if (box):
         box = box.css("tbody > tr > th")
         for size in box:
-            if("MY" not in size.text()):
+            r=size.text()
+            if("MY" not in r):
+                if (r.find("(")!=-1):
+                    r=r[:r.find("(")]
                 sizes.append(size.text())
         if(len(s)==2):
             count = 0
@@ -130,22 +133,6 @@ def extract_musinsa_product_tag_list(bs):
     return tags
 def extract_musinsa_product_recommends(bs,pid):
     recommends=[]
-    # data = {
-    #     'goods_no': pid,
-    #     'goods_sub': '0', 
-    # }
-    # response = requests.post(f"https://store.musinsa.com/app/svc/get_size_recommend/{pid}/0",headers=headers,data=data).text
-    # response = json.loads(response)
-    # start= time.time()
-    # for r in response:
-    #     recommend ={}
-    #     recommend["gender"] = "여자" if r["sex"]=="F" else "남자"
-    #     recommend["height"] = r["height"]
-    #     recommend["weight"] = r["weight"]
-    #     recommend["goods_opt"] = r["goods_opt"]
-    #     recommend["size_recommend"] = r["size"]
-    #     recommends.append(recommend)
-    # print((time.time()-start)*1000)
     recommend_list = bs.css("#product_size_recommend > ul > li")
     if recommend_list:
         for recommend in recommend_list:
