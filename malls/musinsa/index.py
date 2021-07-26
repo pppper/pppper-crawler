@@ -68,4 +68,4 @@ for brand in brands:
     for pid in products:
         product = products[pid]
         product = {'_id': pid, **product}
-        product_collection.replace_one({'_id': pid}, product, upsert=True)
+        # product_collection.replace_one({'_id': pid}, product, upsert=True)

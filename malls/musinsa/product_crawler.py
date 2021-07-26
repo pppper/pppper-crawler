@@ -1,5 +1,6 @@
 import json
 import regex
+import logging
 import requests
 from utils import jsonprint, timeit
 from bs4 import BeautifulSoup
