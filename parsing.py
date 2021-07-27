@@ -3,6 +3,7 @@ import requests
 from selectolax.parser import HTMLParser
 import json
 from utils import timeit
+from log import app_logger
 headers = {
     'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.164 Safari/537.36',
 }
@@ -196,5 +197,9 @@ def parse_product_html(pid, html):
         product['recommends'] = extract_musinsa_product_recommends(tree, pid)
     except AssertionError as e:
         # 사이즈 배열에서 던진 에러 처리, 옵션이 여러개면 파싱을 멈추고 None 반환
+        app_logger.debug(e)
+        return None
+    except Exception as e:
+        app_logger.error(e)
         return None
     return product

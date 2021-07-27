@@ -15,20 +15,25 @@ def make_logger(name=None):
 
     # 4 handler instance 생성
     console = logging.StreamHandler()
-    file_handler = logging.FileHandler(filename="crawling.log")
+    file_handler_info = logging.FileHandler(filename="crawling_info.log")
+    file_handler_debug = logging.FileHandler(filename="crawling_debug.log")
 
     # 5 handler 별로 다른 level 설정
     console.setLevel(logging.INFO)
-    file_handler.setLevel(logging.DEBUG)
+    file_handler_info.setLevel(logging.INFO)
+    file_handler_debug.setLevel(logging.DEBUG)
 
     # 6 handler 출력 format 지정
     console.setFormatter(formatter)
-    file_handler.setFormatter(formatter)
+    file_handler_info.setFormatter(formatter)
+    file_handler_debug.setFormatter(formatter)
 
     # 7 logger에 handler 추가
     logger.addHandler(console)
-    logger.addHandler(file_handler)
+    logger.addHandler(file_handler_info)
+    logger.addHandler(file_handler_debug)
 
     return logger
 
-logger = make_logger('crawling')
+
+app_logger = make_logger('crawling')
