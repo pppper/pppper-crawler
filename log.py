@@ -15,8 +15,8 @@ def make_logger(name=None):
 
     # 4 handler instance 생성
     console = logging.StreamHandler()
-    file_handler_info = logging.FileHandler(filename="crawling_info.log")
-    file_handler_debug = logging.FileHandler(filename="crawling_debug.log")
+    file_handler_info = logging.FileHandler(filename="log/crawling_info.log")
+    file_handler_debug = logging.FileHandler(filename="log/crawling_debug.log")
 
     # 5 handler 별로 다른 level 설정
     console.setLevel(logging.INFO)

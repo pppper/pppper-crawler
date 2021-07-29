@@ -11,7 +11,7 @@ headers = {
     'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.106 Safari/537.36',
 }
 
-def crawl_musinsa_product_html(product_id):
+def fetch_product_html(product_id):
     '''product_id를 인자로 받아서 제품 크롤링 및 파싱, JSON 형식으로 반환'''
     url = f'https://store.musinsa.com/app/goods/{product_id}'
 

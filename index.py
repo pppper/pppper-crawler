@@ -1,11 +1,9 @@
-from numpy.core.numeric import indices
-from top_brand_crawler import crawl_musinsa_top_brand
-from product_parser import parse_product_html
+from musinsa.product_parser import parse_product_html
 from tqdm import tqdm
 from time import sleep
 import concurrent.futures
-from product_crawler import crawl_musinsa_product_html
-from brand_product_crawler import crawl_musinsa_brand_product_ids
+from musinsa.product_crawler import fetch_product_html
+from musinsa.brand_product_crawler import crawl_musinsa_brand_product_ids
 import numpy as np
 
 from log import app_logger
@@ -36,7 +34,7 @@ def fetch_product_htmls(brand, max_products=200):
     with concurrent.futures.ThreadPoolExecutor(max_workers=90) as executor:
         app_logger.debug(f"start fetching <{brand}> products")
         for pid, html in zip(product_ids, executor.map(
-                crawl_musinsa_product_html, product_ids)):
+                fetch_product_html, product_ids)):
             htmls[pid] = html
         app_logger.debug(f"complete fetching <{brand}> products html")
 
@@ -70,7 +68,7 @@ def parse_product_htmls(brand, htmls):
 # brands = [brand['brandcode'] for brand in brands]
 brands = ['archivepke', 'alphaindustries', 'badblood', 'bensimon', 'branded', 'blond9', 'bemusemansion', 'covernat', 'converse', 'drmartens', 'espionage', 'etmon', 'ebbetsfield', 'ept', 'fcmm', 'fatalism', 'halbkreis', 'insilencewomen', 'kirsh', 'lafudgeforwomen', 'lafudgestore', 'leire', 'lee', 'lmc', 'mardimercredi', 'marithefrancoisgirbaud', 'markgonzales',
           'mahagrid', 'maisonmined', 'modnine', 'mixxo', 'millioncor', 'nationalgeographic', 'neikidnis', 'outdoorproducts', 'outstanding', 'oioi', '5252byoioi', 'partimento', 'rothco', 'sovermentwithlomort', 'suare', 'spao', 'signature', 'thisisneverthat', 'takeasy', 'toffee', 'travel', 'uniformbridge', 'vivastudio', 'viaplain', 'wvproject', 'xero', 'yale', 'yourlifehere']
-print(len(brands))
+# print(len(brands))
 
 
 def crawl_brand(brand):

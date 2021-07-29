@@ -32,7 +32,3 @@ async def crawl_musinsa_top_brand():
       bs = BeautifulSoup(html, 'html.parser')
       brand_ranking = await extract_musinsa_brand_rank(bs)
   return brand_ranking
-
-# brands = asyncio.run(crawl_musinsa_top_brand())
-# print(brands)
-# jsonprint(brands)

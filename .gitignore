@@ -4,5 +4,7 @@ node_modules
 .prettierrc
 package-lock.json
 *.log
+log/*
 __pycache__/*
 **/*/__pycache__
+data/
