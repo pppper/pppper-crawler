@@ -1,10 +1,12 @@
 from index import getDb
 from flask.json import jsonify
-from parsing import parse_product_html
+from product_parser import parse_product_html
 from product_crawler import crawl_musinsa_product_html
 from flask import Flask
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 
 @app.route("/")
 def index():
@@ -24,7 +26,4 @@ def crawl_product(product_id):
 @app.route("/api/v1/crawl-products", methods=['POST'])
 def crawl_products():
     '''제품 1개 크롤링(데이터베이스 저장o)'''
-    pass
-
-def crawl_by_product_id(product_id):
     pass
