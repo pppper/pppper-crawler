@@ -5,8 +5,9 @@ from flask.json import jsonify
 from musinsa.index import crawl_product
 from flask import Flask, send_file, request
 from flask_cors import CORS
+import logging
 
-
+logging.basicConfig(filename="log/requests_debug.log", level=logging.DEBUG)
 app = Flask(__name__)
 CORS(app)
 

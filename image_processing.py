@@ -4,10 +4,10 @@ from PIL import Image
 import numpy as np
 from rembg.bg import remove
 import time
-
+headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
 def remove_background(image_url):
     start = time.time()
-    response = requests.get(image_url, stream=True)
+    response = requests.get(image_url, stream=True, headers=headers)
     point1 = time.time() - start
     image = Image.open(io.BytesIO(response.content))
     point2 = time.time() - point1
