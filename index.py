@@ -1,5 +1,6 @@
+from numpy.core.numeric import indices
 from top_brand_crawler import crawl_musinsa_top_brand
-from parsing import parse_product_html
+from product_parser import parse_product_html
 from tqdm import tqdm
 from time import sleep
 import concurrent.futures
@@ -57,8 +58,9 @@ def parse_product_htmls(brand, htmls):
             count += 1
         else:
             parse_failed_product_ids.append(pid)
-            app_logger.warning(f"parsing failed for product <{pid}>")
-    app_logger.critical(f'brand <{brand}> coverage: {100 * (count / len(htmls))}%')
+            # app_logger.warning(f"parsing failed for product <{pid}>")
+    app_logger.critical(
+        f'brand <{brand}> coverage: {100 * (count / len(htmls))}%')
 
     return products
     # 하루에 상위 50개 브랜드, 브랜드당 200개 -> 10000개 제품
@@ -72,7 +74,7 @@ print(len(brands))
 
 
 def crawl_brand(brand):
-    app_logger.debug(f"[brand] start crawling brand <{brand}>")
+    app_logger.info(f"[brand] start crawling brand <{brand}>")
     htmls = fetch_product_htmls(brand, 200)
     products = parse_product_htmls(brand, htmls)
 
@@ -85,23 +87,34 @@ def crawl_brand(brand):
 
 def crawl(brands):
     app_logger.info(f"start crawling brands <{brands}>")
-    STAGE_SIZE = 20  # split brands into array of arrays(max 20 size)
+    STAGE_SIZE = 15  # split brands into array of arrays(max 20 size)
 
-    # app_logger.debug(f"splitting brands into brand_groups")
+    app_logger.debug(f"splitting brands into brand_groups")
+    split_points = [i * STAGE_SIZE for i in range(len(brands) // STAGE_SIZE)]
+
+    completed_brands = []
+
     if len(brands) < STAGE_SIZE:
         brand_groups = np.array([brands])
     else:
-        brand_groups = np.split(np.array(brands), len(brands) // STAGE_SIZE)
+        brand_groups = np.split(
+            np.array(brands), indices_or_sections=split_points[1:])
     # app_logger.debug(f"brand_groups: {brand_groups}")
 
     for i in range(len(brand_groups)):
         brand_group = brand_groups[i]
-        # app_logger.info(f"crawling brand group ({i} / {len(brand_groups)})")
+        # app_logger.debug(f"crawling brand group ({i} / {len(brand_groups)})")
         with concurrent.futures.ProcessPoolExecutor(max_workers=5) as executor:
             for brand, data in zip(brands, executor.map(crawl_brand, brand_group)):
+                completed_brands.append(brand)
+                app_logger.info(
+                    f"completed crawling brand <{brand}> ({len(completed_brands)}/{len(brands)})")
                 pass
-        # sleep(60)
+        sleep_time = 60 * 3
+        app_logger.info(f"sleeping {sleep_time}s...")
+        sleep(sleep_time)
+        app_logger.info('resuming...')
 
 
 if __name__ == '__main__':
-    crawl(brands[:5])
+    crawl(brands)
