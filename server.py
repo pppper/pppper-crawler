@@ -1,5 +1,5 @@
 import io
-from image_proceessing import remove_background
+from image_processing import remove_background
 from index import getDb
 from flask.json import jsonify
 from musinsa.index import crawl_product
